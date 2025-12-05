@@ -1,0 +1,22 @@
+{
+  "name": "RSA Application",
+  "description": "Systematology RAG Application",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "extensions.png",
+    "default_title": "Click to open panel"
+  },
+  "permissions": ["sidePanel", "contextMenus", "tabs", "activeTab"],
+  "icons": {
+    "16": "extensions.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [{
+    "matches": [ "http://localhost:*/*" ],
+    "js": ["content.js"]
+  }],
+  "host_permissions": [ "http://localhost:*/*" ]
+}
