@@ -1,0 +1,10 @@
+.rag-deepseek-select {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+.rag-deepseek-select:focus {
+  border: none!important;
+  outline: none!important;
+  box-shadow: none!important;
+}
