@@ -7,7 +7,7 @@
     "default_icon": "extensions.png",
     "default_title": "Click to open panel"
   },
-  "permissions": ["sidePanel", "contextMenus", "tabs", "activeTab"],
+  "permissions": ["sidePanel", "contextMenus", "tabs", "activeTab", "scripting"],
   "icons": {
     "16": "extensions.png"
   },
@@ -15,7 +15,7 @@
     "service_worker": "background.js"
   },
   "content_scripts": [{
-    "matches": [ "http://localhost:*/*" ],
+    "matches": [ "http://*/*", "https://*/*", "http://localhost:*/*" ],
     "js": ["content.js"]
   }],
   "host_permissions": [ "http://localhost:*/*" ]

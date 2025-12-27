@@ -1,5 +1,4 @@
 #root {
-  padding: 1rem;
   display: flex;
 }
 
@@ -37,4 +36,33 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.history-record-none {
+  animation: 0.3s linear slidein forwards;
+}
+
+@keyframes slidein {
+  0% {
+    margin-left: 0px;
+  }
+  100% {
+    margin-left: -288px;
+    display: none;
+    /* opacity: 0; */
+  }
+}
+
+.history-record {
+  animation: 0.3s linear slideinReverse forwards;
+}
+
+@keyframes slideinReverse {
+  0% {
+    margin-left: -288px;
+  }
+  100% {
+    margin-left: 0px;
+    display: block;
+  }
 }

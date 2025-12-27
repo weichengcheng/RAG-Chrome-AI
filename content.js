@@ -56,3 +56,9 @@
 //     }
 //   })();
 // });
+
+// alert('1')
+console.log('你好啊')
+// const node = document.createElement('div');
+// node.innerText = '测试插入脚本mainfest->content_scripts'
+// document.getElementsByTagName('body')[0].appendChild(node)

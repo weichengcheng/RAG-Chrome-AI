@@ -24,22 +24,30 @@ function App() {
         const results: Array<{ detectedLanguage: string, confidence: number }> = await detector.detect(message);
 
         console.log('result', results);
+        // 中 <-> 英
+        let sourceLanguage = 'en'
+        let targetLanguage = 'zh'
+
+        if (results?.[0].detectedLanguage === 'zh') {
+          sourceLanguage = 'zh'
+          targetLanguage = 'en'
+        }
+
         const translator = await window.Translator.create({
-          // sourceLanguage: results?.[0].detectedLanguage || 'en',
-          sourceLanguage: 'en',
-          targetLanguage: 'zh',
+          sourceLanguage: sourceLanguage,
+          targetLanguage: targetLanguage,
         });
 
-        const result = await translator.translate(message);
-
-        setLoading(false);
-        setResult(result);
-
+        // const result = await translator.translate(message);
         // 大量翻译，流式返回
-        // const stream = translator.translateStreaming(message);
-        // for await (const chunk of stream) {
-        //   console.log(chunk);
-        // }
+        const stream = translator.translateStreaming(message);
+        let result = '';
+        const node = document.getElementById('popup-result')!;
+        for await (const chunk of stream) {
+          setLoading(false);
+          result = result + chunk;
+          node.innerText = result;
+        }
       } catch (error) {
         console.error('Translation error:', error);
       }
@@ -50,19 +58,50 @@ function App() {
         const summarizer = await window.Summarizer.create({
           type: 'key-points',
           Format: 'plain-text',
-          // 'en', 'ja', 'es', 
-          expectedInputLanguages: ['en'],
+          expectedInputLanguages: ['en', 'es', 'ja'],
           outputLanguage: 'en',
           // expectedContextLanguages: ['en', 'ja', 'es', 'zh'],
           // sharedContext: '',
         });
 
-        const summary = await summarizer.summarize(message, { context: '' });
+        // const summary = await summarizer.summarize(message, { context: '' });
+        const summary = await summarizer.summarizeStreaming(message, { context: '' });
+        let result = ''
+        const node = document.getElementById('popup-result')!;
+        for await (const chunk of summary) {
+          result = result + chunk;
 
-        setLoading(false);
-        setResult(summary);
+          setLoading(false);
+          node.innerText = result
+        }
       } catch (error) {
         console.error('Summarizer error:', error);
+      }
+    }
+
+    const prompt = async (message: string) => {
+      const availability = await window.LanguageModel.availability();
+
+      if (availability === 'unavailable') {
+        setResult('当前模型不可用');
+        return;
+      }
+
+      const params = await window.LanguageModel.params();
+      const session = await window.LanguageModel.create({
+        temperature: Math.max(params.defaultTemperature * 1.2, 2.0),
+        topK: params.defaultTopK,
+      });
+
+      // const prompt = await session.prompt(message);
+      const stream = session.promptStreaming(message);
+      let result = ''
+      const node = document.getElementById('popup-result')!;
+      for await (const chunk of stream) {
+        result = result + chunk;
+
+        setLoading(false);
+        node.innerText = result
       }
     }
 
@@ -106,48 +145,14 @@ function App() {
           setTip('摘要生成中，请稍候...');
           summarizer(message.message)
           break;
+        case 'Prompt':
+          setTip('提示生成中，请稍候...');
+          prompt(message.message)
       }
 
       // sendResponse({ success: true });
     });
 
-  }, [])
-
-  useEffect(() => { 
-
-  }, [])
-
-  // const [messageApi] = message.useMessage();
-
-  useEffect(() => {
-    // const init = async () => {
-    //   const availability = await window.LanguageModel.availability();
-    //   switch (availability) {
-    //     case 'unavailable':
-    //       messageApi.open({
-    //         type: 'warning',
-    //         content: '当前设备不支持本地运行语言模型，请更换设备后重试。',
-    //       });
-    //       break;
-    //     case 'downloading':
-    //       await window.LanguageModel.create({
-    //         monitor(m: { addEventListener: (type: string, callback: (e: { loaded: number }) => void) => void }) {
-    //           m.addEventListener('downloadprogress', (e) => {
-    //             console.log(`Downloaded ${e.loaded * 100}%`);
-    //             messageApi.open({
-    //               type: 'warning',
-    //               content: `模型下载中，请稍后再试，当前进度${e.loaded * 100}%`,
-    //             });
-    //           });
-    //         },
-    //       });
-    //       break;
-    //     case 'available':
-    //       break;
-    //   }
-    // }
-
-    // init();
   }, [])
 
   const [languageDetectorPercent, setLanguageDetectorPercent] = useState(0);
@@ -190,7 +195,7 @@ function App() {
 
   return (
     <Spin tip={tip} spinning={loading}>
-      <div className="pt-4 pb-4 pl-2 pr-2 w-96 h-80 text-sm">
+      <div className="pt-4 pb-4 pl-2 pr-2 w-96 min-h-80 text-sm">
         {
           (detectorDownloadable || translateDownloadable || summarizerDownloadable) ? (
             <div className="font-bold mb-4">请先下载Chrome AI模型重试</div>
@@ -217,9 +222,7 @@ function App() {
           )}
         </div>
 
-        <div className="h-full bg-zinc-200 rounded-xl p-4">
-          {result}
-        </div>
+        <div className="h-full min-h-80 bg-zinc-200 rounded-xl p-4" id="popup-result">{result}</div>
       </div>
     </Spin>
   )

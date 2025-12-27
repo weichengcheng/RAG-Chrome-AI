@@ -2,12 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <!-- <link rel="apple-touch-icon" sizes="192*192" href="/pwa-192.png" />
+    <link rel="apple-touch-icon" sizes="512*512" href="/pwa-512.png" /> -->
+    <link rel="manifest" href="/manifest-pwa.json" />
+    <link rel="icon" sizes="192x192" href="/pwa-192.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-status-bar-style" content="default" />
     <title>Chrome AI Developer</title>
   </head>
+  <script>
+    console.log('123')
+    // 监听资源加载错误
+    window.addEventListener('error', (err) => {
+      console.log('err', err)
+    })
+
+    // console.log(a)
+  </script>
   <body>
     <div id="root"></div>
+    <script>
+      // 注册 Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw-register.js')
+            .then(() => console.log('SW 注册成功'))
+            .catch(err => console.log('SW 注册失败', err));
+        });
+      }
+    </script>
+    
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/index.js"></script>
+    <script type="module" src="/interview.js"></script>
+    <!-- <script type="module" src="/interview1.js"></script> -->
+
   </body>
 </html>

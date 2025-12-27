@@ -27,6 +27,34 @@ export default defineConfig({
           src: 'content.js', // 源文件路径
           dest: '', // 目标路径（相对于dist目录）
         },
+        {
+          src: 'script.js', // 源文件路径
+          dest: '', // 目标路径（相对于dist目录）
+        },
+        {
+          src: 'manifest-pwa.json', // 源文件路径
+          dest: '', // 目标路径（相对于dist目录）
+        },
+        {
+          src: 'sw-register.js', // 源文件路径
+          dest: '', // 目标路径（相对于dist目录）
+        },
+        {
+          src: 'pwa-192.png', // 源文件路径
+          dest: '', // 目标路径（相对于dist目录）
+        },
+        {
+          src: 'pwa-512.png', // 源文件路径
+          dest: '', // 目标路径（相对于dist目录）
+        },
+        {
+          src: 'pwa-750x1334.png', // 源文件路径
+          dest: '', // 目标路径（相对于dist目录）
+        },
+        {
+          src: 'pwa-1280x720.png', // 源文件路径
+          dest: '', // 目标路径（相对于dist目录）
+        },
       ],
     }),
   ],
