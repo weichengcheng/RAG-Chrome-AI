@@ -8,3 +8,17 @@ interface Window {
 }
 
 declare const window: Window;
+
+// declare namespace $ {
+
+// }
+
+declare const $: JQueryStatic;
+
+interface JQueryStatic {
+  (selector: string, context?: Element | JQuery): JQuery;
+}
+
+interface JQuery {
+  append(content: string | JQuery | Element | Array<Element>): this;
+}
